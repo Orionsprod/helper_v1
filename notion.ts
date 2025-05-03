@@ -132,3 +132,49 @@ export async function updateProjectFolderUrl(pageId: string, folderUrl: string):
   if (DEBUG) console.log(`✅ Notion page updated with Project Folder URL.`);
 }
 
+export async function getBrandNameFromPage(pageId: string): Promise<string | null> {
+  const res = await fetch(`https://api.notion.com/v1/pages/${pageId}`, {
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${NOTION_TOKEN}`,
+      "Notion-Version": "2022-06-28",
+    },
+  });
+
+  const page = await res.json();
+
+  if (!res.ok) {
+    console.error("❌ Failed to fetch page for brand lookup:", page);
+    return null;
+  }
+
+  const brandRelation = page.properties["Brand"];
+  const relatedId = brandRelation?.relation?.[0]?.id;
+
+  if (!relatedId) {
+    if (DEBUG) console.log("⚠️ No Brand relation found.");
+    return null;
+  }
+
+  // Fetch the related brand page
+  const brandRes = await fetch(`https://api.notion.com/v1/pages/${relatedId}`, {
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${NOTION_TOKEN}`,
+      "Notion-Version": "2022-06-28",
+    },
+  });
+
+  const brandData = await brandRes.json();
+
+  if (!brandRes.ok) {
+    console.error("❌ Failed to fetch related Brand page:", brandData);
+    return null;
+  }
+
+  const brandName = brandData.properties["Name"]?.title?.[0]?.text?.content;
+
+  if (DEBUG) console.log("🏷️ Found Brand name:", brandName);
+  return brandName || null;
+}
+
