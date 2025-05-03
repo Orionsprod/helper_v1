@@ -105,3 +105,30 @@ export async function updateProjectName(pageId: string, newTitle: string): Promi
 
   if (DEBUG) console.log("✅ Project Name title updated in Notion.");
 }
+
+export async function updateProjectFolderUrl(pageId: string, folderUrl: string): Promise<void> {
+  const res = await fetch(`https://api.notion.com/v1/pages/${pageId}`, {
+    method: "PATCH",
+    headers: {
+      "Authorization": `Bearer ${NOTION_TOKEN}`,
+      "Content-Type": "application/json",
+      "Notion-Version": "2022-06-28",
+    },
+    body: JSON.stringify({
+      properties: {
+        "Project Folder": {
+          url: folderUrl,
+        },
+      },
+    }),
+  });
+
+  if (!res.ok) {
+    const error = await res.text();
+    console.error("❌ Failed to update Project Folder URL:", error);
+    throw new Error("Notion API Error: " + error);
+  }
+
+  if (DEBUG) console.log(`✅ Notion page updated with Project Folder URL.`);
+}
+
