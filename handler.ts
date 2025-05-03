@@ -1,13 +1,13 @@
 import { createDriveFolder } from "./drive.ts";
-import { updateNotionPage } from "./notion.ts";
+import { updateNotionPage, getPageTitle } from "./notion.ts";
 import { DEBUG } from "./config.ts";
 
 Deno.serve(async (req) => {
   try {
-    const { pageId, folderName } = await req.json();
+    const { pageId } = await req.json();
+    if (DEBUG) console.log("Webhook received for page ID:", pageId);
 
-    if (DEBUG) console.log("Webhook received:", { pageId, folderName });
-
+    const folderName = await getPageTitle(pageId);
     const folderUrl = await createDriveFolder(folderName);
     await updateNotionPage(pageId, folderUrl);
 
