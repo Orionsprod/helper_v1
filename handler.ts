@@ -20,7 +20,8 @@ Deno.serve(async (req) => {
 
     return new Response("Success", { status: 200 });
   } catch (e) {
-    if (DEBUG) console.error("Error in webhook handler:", e);
-    return new Response("Internal Server Error", { status: 500 });
+  console.error("Error in webhook handler:", e?.message || e);
+  if (e?.stack) console.error(e.stack);
+  return new Response("Internal Server Error", { status: 500 });
   }
 });
