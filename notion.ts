@@ -41,7 +41,7 @@ export async function updateNotionPage(pageId: string, folderUrl: string): Promi
     },
     body: JSON.stringify({
       properties: {
-        "Master Folder": {
+        "Project Folder": {
           url: folderUrl,
         },
       },
