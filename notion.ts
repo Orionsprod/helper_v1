@@ -173,7 +173,7 @@ export async function getBrandNameFromPage(pageId: string): Promise<string | nul
     return null;
   }
 
-  const brandName = brandData.properties["Name"]?.title?.[0]?.text?.content;
+  const brandName = brandData.properties["Client"]?.title?.[0]?.text?.content;
 
   if (DEBUG) console.log("🏷️ Found Brand name:", brandName);
   return brandName || null;
