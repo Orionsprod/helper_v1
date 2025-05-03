@@ -1,5 +1,5 @@
 import { createDriveFolder } from "./drive.ts";
-import { updateNotionPage, getPageTitle } from "./notion.ts";
+import { getPageTitleWithPrefix, updateNotionPage } from "./notion.ts";
 import { DEBUG } from "./config.ts";
 
 Deno.serve(async (req) => {
