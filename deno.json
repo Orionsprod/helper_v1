@@ -1,0 +1,6 @@
+{
+  "imports": {},
+  "tasks": {
+    "start": "deno run --allow-env --allow-net handler.ts"
+  }
+}
