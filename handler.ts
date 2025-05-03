@@ -1,5 +1,4 @@
-import { getPageTitleWithPrefix, updateNotionPage } from "./notion.ts";
-import { createDriveFolder } from "./drive.ts";
+import { getPageTitleWithPrefix, updateProjectName } from "./notion.ts";
 import { DEBUG } from "./config.ts";
 
 Deno.serve(async (req) => {
@@ -14,13 +13,16 @@ Deno.serve(async (req) => {
 
     if (DEBUG) console.log("📩 Webhook received for page ID:", pageId);
 
-    const folderName = await getPageTitleWithPrefix(pageId);
-    const folderUrl = await createDriveFolder(folderName);
-    await updateNotionPage(pageId, folderUrl);
+    const fullTitle = await getPageTitleWithPrefix(pageId);
+    if (!fullTitle) {
+      return new Response("⚠️ Skipped: title is not ready.", { status: 200 });
+    }
 
-    return new Response("✅ Folder created and page updated", { status: 200 });
+    await updateProjectName(pageId, fullTitle);
+
+    return new Response("✅ Notion title updated", { status: 200 });
   } catch (e) {
-    console.error("🔥 Error in add-page webhook handler:");
+    console.error("🔥 Error in webhook handler:");
     console.error(e?.message || e);
     if (e?.stack) console.error(e.stack);
     return new Response("Internal Server Error", { status: 500 });
