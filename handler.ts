@@ -1,6 +1,7 @@
 import { getPageTitleWithPrefix, updateProjectName, updateProjectFolderUrl, getBrandNameFromPage } from "./notion.ts";
 import { createDriveFolder } from "./drive.ts";
 import { DEBUG } from "./config.ts";
+import { setProjectIconFromTitle } from "./set_project_icon.ts";
 
 Deno.serve(async (req) => {
   try {
@@ -20,6 +21,8 @@ Deno.serve(async (req) => {
     }
 
     await updateProjectName(pageId, fullTitle);
+    await setProjectIconFromTitle(pageId, finalTitle);
+
 
     // 🔍 Look up brand name from relation
     const brandName = await getBrandNameFromPage(pageId);
