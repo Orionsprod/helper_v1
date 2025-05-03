@@ -1,4 +1,5 @@
-import { getPageTitleWithPrefix, updateProjectName } from "./notion.ts";
+import { getPageTitleWithPrefix, updateProjectName, updateProjectFolderUrl } from "./notion.ts";
+import { createDriveFolder } from "./drive.ts";
 import { DEBUG } from "./config.ts";
 
 Deno.serve(async (req) => {
@@ -20,7 +21,10 @@ Deno.serve(async (req) => {
 
     await updateProjectName(pageId, fullTitle);
 
-    return new Response("✅ Notion title updated", { status: 200 });
+    const folderUrl = await createDriveFolder(fullTitle);
+    await updateProjectFolderUrl(pageId, folderUrl);
+
+    return new Response("✅ Title, folder, and Notion update complete", { status: 200 });
   } catch (e) {
     console.error("🔥 Error in webhook handler:");
     console.error(e?.message || e);
