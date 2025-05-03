@@ -1,3 +1,7 @@
+import { createDriveFolder } from "./drive.ts";
+import { updateNotionPage, getPageTitle } from "./notion.ts";
+import { DEBUG } from "./config.ts";
+
 Deno.serve(async (req) => {
   try {
     const body = await req.json();
