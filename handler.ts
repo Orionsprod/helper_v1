@@ -5,12 +5,13 @@ import { DEBUG } from "./config.ts";
 Deno.serve(async (req) => {
   try {
     const body = await req.json();
-const pageId = body.pageId;
+    const pageId = body.data?.id;
 
-if (!pageId) {
-  console.error("Missing pageId in webhook payload:", body);
-  return new Response("Bad Request: Missing pageId", { status: 400 });
-}
+    if (!pageId) {
+      console.error("Missing pageId in webhook payload:", body);
+      return new Response("Bad Request: Missing pageId", { status: 400 });
+    }
+
     if (DEBUG) console.log("Webhook received for page ID:", pageId);
 
     const folderName = await getPageTitle(pageId);
