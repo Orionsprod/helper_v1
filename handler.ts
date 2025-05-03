@@ -14,7 +14,7 @@ Deno.serve(async (req) => {
 
     console.log("✅ Webhook received for page ID:", pageId);
 
-    const folderName = await getPageTitle(pageId);
+    const folderName = await getPageTitleWithPrefix(pageId);
     console.log("✅ Fetched Notion page title:", folderName);
 
     const folderUrl = await createDriveFolder(folderName);
