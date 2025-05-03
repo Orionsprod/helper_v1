@@ -19,7 +19,7 @@ export async function getPageTitle(pageId: string): Promise<string> {
 
   const pageData = await res.json();
 
-  const titleProp = pageData.properties["Name"];
+  const titleProp = pageData.properties["Project Name"];
   if (titleProp?.title?.[0]?.text?.content) {
     const title = titleProp.title[0].text.content;
     if (DEBUG) console.log("Fetched page title:", title);
