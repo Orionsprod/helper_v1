@@ -74,7 +74,7 @@ async function getDatabasePageCount(): Promise<number> {
   return total;
 }
 
-export async function updateProjectFolderUrl(pageId: string, folderUrl: string): Promise<void> {
+export async function updateNotionPage(pageId: string, folderUrl: string): Promise<void> {
   const res = await fetch(`${BASE_URL}/pages/${pageId}`, {
     method: "PATCH",
     headers: {
