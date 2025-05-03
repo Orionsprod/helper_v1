@@ -1,7 +1,10 @@
-import { GOOGLE_DRIVE_API_KEY, GOOGLE_ROOT_FOLDER_ID, DEBUG } from "./config.ts";
+import { GOOGLE_ROOT_FOLDER_ID, DEBUG, SERVICE_ACCOUNT_JSON } from "./config.ts";
+import { getAccessTokenFromServiceAccount } from "./google_auth.ts";
 
 export async function createDriveFolder(folderName: string): Promise<string> {
-  const url = "https://www.googleapis.com/drive/v3/files?key=" + GOOGLE_DRIVE_API_KEY;
+  const accessToken = await getAccessTokenFromServiceAccount();
+
+  const url = "https://www.googleapis.com/drive/v3/files";
 
   const body = {
     name: folderName,
@@ -13,7 +16,7 @@ export async function createDriveFolder(folderName: string): Promise<string> {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${GOOGLE_DRIVE_API_KEY}`,
+      "Authorization": `Bearer ${accessToken}`,
     },
     body: JSON.stringify(body),
   });
