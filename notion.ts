@@ -40,7 +40,7 @@ export async function getPageTitleWithPrefix(pageId: string): Promise<string> {
   return fullTitle;
 }
 
-export async function updateProjectFolderUrl(pageId: string, folderUrl: string): Promise<void> {
+export async function updateNotionPage(pageId: string, folderUrl: string): Promise<void> {
   const url = `https://api.notion.com/v1/pages/${pageId}`;
 
   const res = await fetch(url, {
