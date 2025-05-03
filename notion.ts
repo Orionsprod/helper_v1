@@ -1,6 +1,6 @@
 import { NOTION_TOKEN, DEBUG } from "./config.ts";
 
-export async function getPageTitle(pageId: string): Promise<string> {
+export async function getPageTitleWithPrefix(pageId: string): Promise<string> {
   const url = `https://api.notion.com/v1/pages/${pageId}`;
 
   const res = await fetch(url, {
@@ -20,16 +20,27 @@ export async function getPageTitle(pageId: string): Promise<string> {
   const pageData = await res.json();
 
   const titleProp = pageData.properties["Project Name"];
-  if (titleProp?.title?.[0]?.text?.content) {
-    const title = titleProp.title[0].text.content;
-    if (DEBUG) console.log("Fetched page title:", title);
-    return title;
-  } else {
-    throw new Error("Could not extract title from Notion page.");
+  const projNumberProp = pageData.properties["Proj Number"];
+
+  if (!titleProp?.title?.[0]?.text?.content) {
+    throw new Error("Project Name is missing.");
   }
+
+  const title = titleProp.title[0].text.content;
+  const projNumber = projNumberProp?.rollup?.array?.[0]?.number;
+
+  let prefix = "";
+  if (typeof projNumber === "number") {
+    const padded = projNumber.toString().padStart(3, "0");
+    prefix = `${padded}_`;
+  }
+
+  const fullTitle = `${prefix}${title}`;
+  if (DEBUG) console.log("Computed full project title:", fullTitle);
+  return fullTitle;
 }
 
-export async function updateNotionPage(pageId: string, folderUrl: string): Promise<void> {
+export async function updateProjectFolderUrl(pageId: string, folderUrl: string): Promise<void> {
   const url = `https://api.notion.com/v1/pages/${pageId}`;
 
   const res = await fetch(url, {
