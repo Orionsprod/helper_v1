@@ -1,4 +1,4 @@
-import { getPageTitleWithPrefix, updateProjectName, updateProjectFolderUrl } from "./notion.ts";
+import { getPageTitleWithPrefix, updateProjectName, updateProjectFolderUrl, getBrandNameFromPage } from "./notion.ts";
 import { createDriveFolder } from "./drive.ts";
 import { DEBUG } from "./config.ts";
 
@@ -21,7 +21,12 @@ Deno.serve(async (req) => {
 
     await updateProjectName(pageId, fullTitle);
 
-    const folderUrl = await createDriveFolder(fullTitle);
+    // 🔍 Look up brand name from relation
+    const brandName = await getBrandNameFromPage(pageId);
+
+    // 📁 Create folder with dynamic parent if applicable
+    const folderUrl = await createDriveFolder(fullTitle, brandName);
+
     await updateProjectFolderUrl(pageId, folderUrl);
 
     return new Response("✅ Title, folder, and Notion update complete", { status: 200 });
