@@ -5,7 +5,7 @@ const BASE_URL = "https://api.notion.com/v1";
 
 const PROJECTS_DATABASE_ID = Deno.env.get("PROJECTS_DATABASE_ID")!;
 
-export async function getPageTitleWithPrefix(pageId: string): Promise<string> {
+export async function getPageTitleWithPrefix(pageId: string): Promise<string | null> {
   const pageRes = await fetch(`${BASE_URL}/pages/${pageId}`, {
     method: "GET",
     headers: {
@@ -23,10 +23,16 @@ export async function getPageTitleWithPrefix(pageId: string): Promise<string> {
 
   const titleProp = pageData.properties["Project Name"];
   if (!titleProp?.title?.[0]?.text?.content) {
-    throw new Error("Project Name is missing.");
+    if (DEBUG) console.log("⚠️ No title content — skipping.");
+    return null;
   }
 
   const rawTitle = titleProp.title[0].text.content;
+
+  if (!rawTitle || rawTitle.trim().toLowerCase() === "untitled") {
+    if (DEBUG) console.log("⚠️ Skipping page with empty or placeholder title.");
+    return null;
+  }
 
   const count = await getDatabasePageCount();
   const prefix = `${String(count).padStart(3, "0")}_`;
@@ -74,7 +80,7 @@ async function getDatabasePageCount(): Promise<number> {
   return total;
 }
 
-export async function updateNotionPage(pageId: string, folderUrl: string): Promise<void> {
+export async function updateProjectName(pageId: string, newTitle: string): Promise<void> {
   const res = await fetch(`${BASE_URL}/pages/${pageId}`, {
     method: "PATCH",
     headers: {
@@ -84,8 +90,8 @@ export async function updateNotionPage(pageId: string, folderUrl: string): Promi
     },
     body: JSON.stringify({
       properties: {
-        "Project Folder": {
-          url: folderUrl,
+        "Project Name": {
+          title: [{ text: { content: newTitle } }],
         },
       },
     }),
@@ -93,9 +99,9 @@ export async function updateNotionPage(pageId: string, folderUrl: string): Promi
 
   if (!res.ok) {
     const error = await res.text();
-    if (DEBUG) console.error("Notion page update failed:", error);
-    throw new Error("Notion API Error: " + error);
+    console.error("❌ Failed to update Project Name title:", error);
+    throw new Error("Could not update Project Name title.");
   }
 
-  if (DEBUG) console.log(`✅ Project page updated with folder URL.`);
+  if (DEBUG) console.log("✅ Project Name title updated in Notion.");
 }
