@@ -21,7 +21,7 @@ Deno.serve(async (req) => {
     }
 
     await updateProjectName(pageId, fullTitle);
-    await setProjectIconFromTitle(pageId, finalTitle);
+    await setProjectIconFromTitle(pageId, fullTitle);
 
 
     // 🔍 Look up brand name from relation
