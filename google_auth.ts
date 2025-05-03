@@ -1,5 +1,24 @@
 import { SERVICE_ACCOUNT_JSON, DEBUG } from "./config.ts";
 
+function decodePEM(pem: string): ArrayBuffer {
+  const lines = pem
+    .replace(/-----BEGIN PRIVATE KEY-----/, "")
+    .replace(/-----END PRIVATE KEY-----/, "")
+    .replace(/\n/g, "")
+    .replace(/\r/g, "")
+    .trim();
+
+  const binaryStr = atob(lines);
+  const binaryLen = binaryStr.length;
+  const bytes = new Uint8Array(binaryLen);
+
+  for (let i = 0; i < binaryLen; i++) {
+    bytes[i] = binaryStr.charCodeAt(i);
+  }
+
+  return bytes.buffer;
+}
+
 export async function getAccessTokenFromServiceAccount(): Promise<string> {
   try {
     if (DEBUG) console.log("🔍 Parsing GOOGLE_SERVICE_ACCOUNT_JSON...");
@@ -36,10 +55,10 @@ export async function getAccessTokenFromServiceAccount(): Promise<string> {
 
     if (DEBUG) console.log("🔧 Creating JWT for Drive API access...");
 
-    const keyData = account.private_key;
+    const keyData = decodePEM(account.private_key);
     const key = await crypto.subtle.importKey(
       "pkcs8",
-      encoder.encode(keyData),
+      keyData,
       { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
       false,
       ["sign"]
