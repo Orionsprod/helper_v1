@@ -1,4 +1,5 @@
 import { NOTION_TOKEN, DEBUG } from "./config.ts";
+import { GOOGLE_ROOT_FOLDER_ID, ROOT_PROJECTS_ID, ROOT_ARCHIVES_ID, DEBUG } from "./config.ts";
 
 const NOTION_VERSION = "2022-06-28";
 const BASE_URL = "https://api.notion.com/v1";
