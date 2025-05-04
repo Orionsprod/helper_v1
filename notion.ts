@@ -182,33 +182,53 @@ export async function getBrandNameFromPage(pageId: string): Promise<string | nul
 export async function appendSyncedBlockTemplate(pageId: string) {
   const originalBlockId = "d6d1d09cc76a40d1827779f2c6301c52";
 
-  const res = await fetch(`https://api.notion.com/v1/blocks/${pageId}/children`, {
+  if (DEBUG) {
+    console.log("🚀 Appending synced block...");
+    console.log("➡️ Target page ID:", pageId);
+    console.log("🔗 Synced block source ID:", originalBlockId);
+  }
+
+  const url = `https://api.notion.com/v1/blocks/${pageId}/children`;
+
+  const body = {
+    children: [
+      {
+        object: "block",
+        type: "synced_block",
+        synced_block: {
+          synced_from: {
+            block_id: originalBlockId,
+          },
+        },
+      },
+    ],
+  };
+
+  if (DEBUG) {
+    console.log("📦 Request payload:");
+    console.dir(body, { depth: null });
+  }
+
+  const res = await fetch(url, {
     method: "PATCH",
     headers: {
       "Authorization": `Bearer ${NOTION_TOKEN}`,
       "Content-Type": "application/json",
       "Notion-Version": "2022-06-28",
     },
-    body: JSON.stringify({
-      children: [
-        {
-          object: "block",
-          type: "synced_block",
-          synced_block: {
-            synced_from: {
-              block_id: originalBlockId,
-            },
-          },
-        },
-      ],
-    }),
+    body: JSON.stringify(body),
   });
 
+  const result = await res.text();
+
   if (!res.ok) {
-    const error = await res.text();
-    console.error("❌ Failed to insert synced block:", error);
+    console.error("❌ Failed to append synced block:");
+    console.error("🧾 Response:", result);
     throw new Error("Could not insert synced block.");
   }
 
-  if (DEBUG) console.log("✅ Synced block added successfully.");
+  if (DEBUG) {
+    console.log("✅ Synced block appended successfully.");
+    console.log("🧾 Response:", result);
+  }
 }
