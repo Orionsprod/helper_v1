@@ -37,7 +37,7 @@ export async function setProjectIconFromTitle(pageId: string, title: string, ret
     if (res.status === 409 && retry < 1) {
       if (DEBUG) console.warn("⚠️ Conflict occurred while saving icon. Retrying...");
       await new Promise(resolve => setTimeout(resolve, 500)); // wait 500ms
-      return await setProjectIcon(pageId, retry + 1);
+      return await setProjectIconFromTitle(pageId, retry + 1);
     }
 
     if (!res.ok) {
