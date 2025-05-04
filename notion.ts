@@ -179,3 +179,36 @@ export async function getBrandNameFromPage(pageId: string): Promise<string | nul
   return brandName || null;
 }
 
+export async function appendSyncedBlockTemplate(pageId: string) {
+  const originalBlockId = "d6d1d09cc76a40d1827779f2c6301c52";
+
+  const res = await fetch(`https://api.notion.com/v1/blocks/${pageId}/children`, {
+    method: "PATCH",
+    headers: {
+      "Authorization": `Bearer ${NOTION_TOKEN}`,
+      "Content-Type": "application/json",
+      "Notion-Version": "2022-06-28",
+    },
+    body: JSON.stringify({
+      children: [
+        {
+          object: "block",
+          type: "synced_block",
+          synced_block: {
+            synced_from: {
+              block_id: originalBlockId,
+            },
+          },
+        },
+      ],
+    }),
+  });
+
+  if (!res.ok) {
+    const error = await res.text();
+    console.error("❌ Failed to insert synced block:", error);
+    throw new Error("Could not insert synced block.");
+  }
+
+  if (DEBUG) console.log("✅ Synced block added successfully.");
+}
