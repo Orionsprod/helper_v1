@@ -1,4 +1,4 @@
-import { getPageTitleWithPrefix, updateProjectName, updateProjectFolderUrl, getBrandNameFromPage } from "./notion.ts";
+import { getPageTitleWithPrefix, updateProjectName, updateProjectFolderUrl, getBrandNameFromPage, appendSyncedBlockTemplate } from "./notion.ts";
 import { createDriveFolder } from "./drive.ts";
 import { DEBUG } from "./config.ts";
 import { setProjectIconFromTitle } from "./set_project_icon.ts";
@@ -31,6 +31,8 @@ Deno.serve(async (req) => {
     const folderUrl = await createDriveFolder(fullTitle, brandName);
 
     await updateProjectFolderUrl(pageId, folderUrl);
+
+    await appendSyncedBlockTemplate(pageId, folderUrl);
 
     return new Response("✅ Title, folder, and Notion update complete", { status: 200 });
   } catch (e) {
