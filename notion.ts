@@ -180,7 +180,7 @@ export async function getBrandNameFromPage(pageId: string): Promise<string | nul
 }
 
 export async function appendSyncedBlockTemplate(pageId: string) {
-  const originalBlockId = "d6d1d09cc76a40d1827779f2c6301c52";
+  const originalBlockId = "1e7ce39066988092a2f4c3c6d513196a";
 
   if (DEBUG) {
     console.log("🚀 Appending synced block...");
