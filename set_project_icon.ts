@@ -4,7 +4,7 @@ const VIDEO_IMAGE = "https://em-content.zobj.net/source/apple/419/television_1f4
 const STATIC_IMAGE = "https://em-content.zobj.net/source/apple/419/framed-picture_1f5bc-fe0f.png";
 const DEFAULT_IMAGE = "https://emoji.iamrohit.in/img-apple/1f3af.png";
 
-export async function setProjectIconFromTitle(pageId: string, title: string): Promise<void> {
+export async function setProjectIconFromTitle(pageId: string, title: string, retry = 0): Promise<void> {
   try {
     const lower = title.toLowerCase();
     let imageUrl = DEFAULT_IMAGE;
