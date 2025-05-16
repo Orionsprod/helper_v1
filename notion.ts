@@ -180,7 +180,7 @@ export async function getBrandNameFromPage(pageId: string): Promise<string | nul
 }
 
 export async function appendSyncedBlockTemplate(pageId: string) {
-  const originalBlockId = "1e9ce390669880fbaf7fe516d0372241";
+  const originalBlockId = Deno.env.get("NOTION_SYNCED_BLOCK_ID");
 
   if (DEBUG) {
     console.log("🚀 Appending synced block...");
